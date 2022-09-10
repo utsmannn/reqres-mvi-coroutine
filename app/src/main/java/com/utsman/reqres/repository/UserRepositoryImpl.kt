@@ -1,12 +1,10 @@
 package com.utsman.reqres.repository
 
 import com.utsman.reqres.data.User
-import com.utsman.reqres.event.StateEventManager
+import com.diana.lib.core.event.StateEventManager
 import com.utsman.reqres.network.NetworkSources
-import com.utsman.reqres.utils.default
-import org.koin.core.annotation.Single
+import com.diana.lib.core.utils.default
 
-@Single
 class UserRepositoryImpl(
     private val networkSources: NetworkSources
 ) : UserRepository {
@@ -17,7 +15,7 @@ class UserRepositoryImpl(
         get() = _userStateEventManager
 
     override suspend fun getUsers(page: Int) {
-        networkSources.getList(page)
+        networkSources.getListResponse(page)
             .collect(_userStateEventManager)
     }
 

@@ -1,24 +1,29 @@
 package com.utsman.reqres.network
 
+import com.diana.lib.core.event.StateEventFlow
+import com.diana.lib.core.utils.asFlowStateEventMap
+import com.diana.lib.core.utils.mapState
 import com.utsman.reqres.data.Mapper
 import com.utsman.reqres.data.User
-import com.utsman.reqres.utils.FlowState
-import com.utsman.reqres.utils.asFlowStateEvent
-import com.utsman.reqres.utils.flatMap
-import org.koin.core.annotation.Single
+import org.koin.dsl.module
 
-@Single
 class NetworkSources(private val webServicesProvider: WebServicesProvider) {
 
-    suspend fun getList(page: Int): FlowState<List<User>> {
-        return webServicesProvider.get().getList(page).asFlowStateEvent {
+    suspend fun getList(page: Int): StateEventFlow<List<User>> {
+        return webServicesProvider.get().getList(page).asFlowStateEventMap {
             Mapper.mapUserResponses(it)
         }
     }
 
-    /*suspend fun getDetail(id: Int): FlowState<List<User>> {
-        return webServicesProvider.get().getList(1).asFlowStateEvent {
+    suspend fun getListResponse(page: Int): StateEventFlow<List<User>> {
+        return webServicesProvider.getState().getList(page).data.mapState {
             Mapper.mapUserResponses(it)
         }
-    }*/
+    }
+
+    companion object {
+        fun inject() = module {
+            single { NetworkSources(get()) }
+        }
+    }
 }

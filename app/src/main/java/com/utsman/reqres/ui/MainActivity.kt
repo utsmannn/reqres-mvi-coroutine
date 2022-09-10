@@ -1,9 +1,10 @@
 package com.utsman.reqres.ui
 
 import android.os.Bundle
+import com.diana.lib.core.exception.StateApiException
+import com.diana.subscriber.StateEventSubscriber
 import com.utsman.reqres.data.User
 import com.utsman.reqres.databinding.ActivityMainBinding
-import com.utsman.reqres.event.StateEventSubscriber
 import org.koin.androidx.scope.ScopeActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -36,7 +37,13 @@ class MainActivity : ScopeActivity() {
         }
 
         override fun onFailure(throwable: Throwable) {
-            binding.resultUser.append("${throwable.message}...\n")
+            if (throwable is StateApiException) {
+                throwable.printStackTrace()
+                binding.resultUser.append("${throwable.code()}...\n")
+            } else {
+                println("ASUU -> \n${throwable.message}\n\n")
+                binding.resultUser.append("${throwable.message}...\n")
+            }
         }
 
         override fun onSuccess(data: List<User>) {

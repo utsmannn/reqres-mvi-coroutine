@@ -2,14 +2,13 @@ package com.utsman.reqres.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.diana.subscriber.convertEventToSubscriber
 import com.utsman.reqres.data.User
-import com.utsman.reqres.event.StateEventSubscriber
 import com.utsman.reqres.repository.UserRepository
-import com.utsman.reqres.utils.convertEventToSubscriber
 import kotlinx.coroutines.launch
-import org.koin.core.annotation.Scope
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 
-@Scope(MainActivity::class)
 class MainViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
@@ -18,11 +17,17 @@ class MainViewModel(
 
     private val userScope = userManager.createScope(viewModelScope)
 
-    fun subscribeUser(subscriber: StateEventSubscriber<List<User>>) {
+    fun subscribeUser(subscriber: com.diana.subscriber.StateEventSubscriber<List<User>>) {
         convertEventToSubscriber(userManager, subscriber)
     }
 
     fun getUsers(page: Int) = userScope.launch {
         userRepository.getUsers(page)
+    }
+
+    companion object {
+        fun inject() = module {
+            viewModel { MainViewModel(get()) }
+        }
     }
 }

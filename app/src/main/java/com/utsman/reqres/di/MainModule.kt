@@ -1,9 +1,16 @@
 package com.utsman.reqres.di
 
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import com.utsman.reqres.network.NetworkSources
+import com.utsman.reqres.network.WebServicesProvider
+import com.utsman.reqres.repository.UserRepository
+import com.utsman.reqres.ui.MainViewModel
 import org.koin.dsl.module
 
-@Module
-@ComponentScan("com.utsman.reqres")
-class MainModule
+class MainModule {
+    val module = listOf(
+        WebServicesProvider.inject(),
+        NetworkSources.inject(),
+        UserRepository.inject(),
+        MainViewModel.inject()
+    )
+}
